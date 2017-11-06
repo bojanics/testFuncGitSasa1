@@ -1,4 +1,4 @@
-#r "D:/home/site/wwwroot/testAHFormatter/bin/XfoDotNet40Ctl65.dll"
+#r "XfoDotNet40Ctl65.dll"
 #r "itextsharp.dll"
 #r "Newtonsoft.Json"
 
