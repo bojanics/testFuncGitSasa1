@@ -10,7 +10,7 @@ using Altsoft.Publisher;
 public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceWriter log, ExecutionContext context)
 {
    log.Info("AltoSoft function isprocessing a request.");
-   log.Info("PATH is "+System.Text.Encoding.UTF8.GetBytes(System.Environment.GetEnvironmentVariable("PATH")));
+   log.Info("PATH is "+System.Environment.GetEnvironmentVariable("PATH"));
 
    APEngine engine = new APEngine(true);
    
