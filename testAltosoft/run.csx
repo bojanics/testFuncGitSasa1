@@ -11,6 +11,8 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 {
    log.Info("AltoSoft function isprocessing a request.");
 
+   APEngine engine = new APEngine(true);
+   
    dynamic body = req.Content.ReadAsStringAsync().Result;
    dynamic json = JsonConvert.DeserializeObject(body);
    string xml = json.xml;
