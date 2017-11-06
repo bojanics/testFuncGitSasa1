@@ -22,7 +22,7 @@ using Org.BouncyCastle.Pkcs;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.security;
 
-public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")]HttpRequestMessage req, TraceWriter log, ExecutionContext context)
+public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceWriter log, ExecutionContext context)
 {
    log.Info("C# HTTP trigger function processed a request.");
 
