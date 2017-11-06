@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceWriter log)
 {
-    log.Info("saxon function processed a request.");
+    log.Info("saxon function isprocessing a request.");
 
     dynamic body = req.Content.ReadAsStringAsync().Result;
     dynamic json = JsonConvert.DeserializeObject(body);
