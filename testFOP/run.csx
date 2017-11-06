@@ -46,6 +46,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
    wc.Encoding = System.Text.Encoding.UTF8;
    byte[] xslba = new WebClient().DownloadData(xsl);
 
+log.Info("...received xsl:"+xsl);
 
    ByteArrayOutputStream baos = new ByteArrayOutputStream();
    DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
@@ -65,6 +66,8 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
    fopcacheFilePath = fopcacheFilePath.Replace(" ", "%20");
    fopFactoryBuilder.getFontManager().setCacheFile(new URI(fopcacheFilePath));
 
+   log.Info("...fop cache set");
+
    FopFactory fopFactory = fopFactoryBuilder.build();
    FOUserAgent userAgent = fopFactory.newFOUserAgent();
    userAgent.setRendererOverride(null);
@@ -72,12 +75,17 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
    
    fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, baos);
 
+   log.Info("...fop created");
+
    Source src = getSourceForXML(xml);
    Transformer transformer = getTransformerForXSLBA(xslba);
    transformer.setOutputProperty("encoding", "UTF-8");
 
+   log.Info("...transformer prepared");
+   
    Result res = new SAXResult(fop.getDefaultHandler());
    transformer.transform(src, res);
+   log.Info("...transformation executed");
 
    byte[] byteArray = baos.toByteArray();
    bool signpdf = true;
@@ -85,7 +93,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
    if (signpdf || lockpdfwithpassword)
    {
        MemoryStream ss = new MemoryStream();
-       DigiSignPdf(byteArray, ss, new FileStream(homeloc + "cert/GrECo-TestPDFSigningCertificate-pwd_GrECo-Test.pfx", FileMode.Open), "GrECo-Test", "I love signing", "Somewhere on the cloud", "Sasa Bojanic", signpdf, lockpdfwithpassword ? "enhydra" : null, false);
+       DigiSignPdf(byteArray, ss, new FileStream(homeloc + "/cert/GrECo-TestPDFSigningCertificate-pwd_GrECo-Test.pfx", FileMode.Open), "GrECo-Test", "I love signing", "Somewhere on the cloud", "Sasa Bojanic", signpdf, lockpdfwithpassword ? "enhydra" : null, false);
        byteArray = ss.ToArray();
    }
 
