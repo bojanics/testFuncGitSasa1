@@ -24,10 +24,9 @@ using iTextSharp.text.pdf.security;
 
 public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceWriter log, ExecutionContext context)
 {
-   log.Info("C# HTTP trigger function processed a request.");
-
    string homeloc = context.FunctionDirectory;
-   string rootloc = new java.io.File(homeloc).getParentFile().getAbsolutePath();
+
+   log.Info("C# HTTP trigger function FOP processed a request - home loc is "+homeloc);
 
 
    dynamic body = req.Content.ReadAsStringAsync().Result;
@@ -50,16 +49,16 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 
    ByteArrayOutputStream baos = new ByteArrayOutputStream();
    DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-   Configuration cfg = cfgBuilder.buildFromFile(new java.io.File(rootloc+"/userconfig.xml"));
-   FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new java.io.File(rootloc).toURI()).setConfiguration(cfg);
+   Configuration cfg = cfgBuilder.buildFromFile(new java.io.File(homeloc+"/userconfig.xml"));
+   FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new java.io.File(homeloc).toURI()).setConfiguration(cfg);
 
-   URI fontBase = new URI("file", "///" + rootloc.Replace("\\", "/") + "/", null);
+   URI fontBase = new URI("file", "///" + homeloc.Replace("\\", "/") + "/", null);
    FontManager fontManager = fopFactoryBuilder.getFontManager();
    InternalResourceResolver resourceResolver = ResourceResolverFactory
       .createInternalResourceResolver(fontBase, ResourceResolverFactory.createDefaultResourceResolver());
    fontManager.setResourceResolver(resourceResolver);
 
-   string fopcacheFilePath = rootloc+"/fop-fonts.cache";
+   string fopcacheFilePath = homeloc+"/fop-fonts.cache";
 
    fopcacheFilePath = fopcacheFilePath.Replace("\\", "/");
    fopcacheFilePath = "file:///" + fopcacheFilePath;
@@ -86,7 +85,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
    if (signpdf || lockpdfwithpassword)
    {
        MemoryStream ss = new MemoryStream();
-       DigiSignPdf(byteArray, ss, new FileStream(rootloc + "cert/GrECo-TestPDFSigningCertificate-pwd_GrECo-Test.pfx", FileMode.Open), "GrECo-Test", "I love signing", "Somewhere on the cloud", "Sasa Bojanic", signpdf, lockpdfwithpassword ? "enhydra" : null, false);
+       DigiSignPdf(byteArray, ss, new FileStream(homeloc + "cert/GrECo-TestPDFSigningCertificate-pwd_GrECo-Test.pfx", FileMode.Open), "GrECo-Test", "I love signing", "Somewhere on the cloud", "Sasa Bojanic", signpdf, lockpdfwithpassword ? "enhydra" : null, false);
        byteArray = ss.ToArray();
    }
 
